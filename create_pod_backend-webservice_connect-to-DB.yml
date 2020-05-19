@@ -1,0 +1,31 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: candy-service
+spec:
+  securityContext: #2000 is the id referencing the file system group the container will need to run with
+    fsGroup: 2000
+  serviceAccountName: candy-svc #refering a service account needed for accessing the kubeernetes API
+  containers:
+  - name: candy-service
+    image: linuxacademycontent/candy-service:1 #the container image being utilized
+    volumeMounts: #mounting the volume the config data is stored in
+    - name: config-volume
+      mountPath: /etc/candy-service
+    env: #brings over the kubernetes secret that contains the DB pw as a variable
+    - name: DB_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: db-password
+          key: password
+    resources: # sets limits on the container
+      requests:
+        memory: "64Mi"
+        cpu: "250m"
+      limits:
+        memory: "128Mi"
+        cpu: "500m"
+  volumes:
+  - name: config-volume
+    configMap: # configuration data the container needs; this will be stored in a volume
+      name: candy-service-config

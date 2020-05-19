@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx 
+  namespace: web #This is an exampl namespace
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+    command: ["nginx"]
+    args: ["-g", "daemon off;", "-q"] #This switch has nginx run in quiet mode to cut down on unnecessary log output
+    ports:
+    - containerPort: 80
